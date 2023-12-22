@@ -1,0 +1,8 @@
+.ant-form-item-control-input-content {
+    display: flex;
+    justify-content: left;
+    width: 100%;
+}
+.ant-upload-wrapper {
+    width: 100%;
+}

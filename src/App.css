@@ -36,3 +36,10 @@
     transform: rotate(360deg);
   }
 }
+
+.main-view-container{
+  margin-top: calc(9vh + 10px);
+  width: calc( 100vw - 78px); 
+  margin-left: 58px; 
+  position: absolute;
+}

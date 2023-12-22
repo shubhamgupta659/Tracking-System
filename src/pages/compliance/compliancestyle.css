@@ -1,0 +1,8 @@
+.security-compliance {
+    margin-top: 10px;
+}
+
+.security-compliance > .ant-card-body {
+    display: flex;
+    justify-content: center;
+}

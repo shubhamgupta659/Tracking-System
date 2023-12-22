@@ -1,0 +1,124 @@
+.nav-bar-main-container-open {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 9vh;
+    width: 212px;
+    max-width: max-content;
+    transition: width .3s ease-in-out;
+    height: 94vh;
+    background-color: #6b6c6e;
+    color: #ffffff;
+  }
+  
+  /* nav-bar-main-container-closed */
+  .nav-bar-main-container-closed {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 9vh;
+    height: 94vh;
+    background-color: #6b6c6e;
+    color: #ffffff;
+    transition: width .3s ease-in-out;
+    width: 48px;
+  }
+  
+/* side-item-container */
+.side-item-container {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    cursor: pointer;
+    color: cornsilk;
+    text-decoration: none;
+    overflow: hidden;
+  }
+  
+  /* side-item-container hover */
+  .side-item-container:hover {
+    color: antiquewhite;
+  }
+  
+  /* menu-button */
+  .menu-button {
+    align-items: center;
+    align-self: flex-start;
+    justify-self: end;
+    color: cornsilk;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding-left: 20px;
+  }
+  
+  /* ant-menu */
+  .ant-menu {
+    background-color: #6b6c6e !important;
+    color: #ffffff !important;
+  }
+
+  /* ant-menu-item */
+.ant-menu-item {
+    display: flex;
+    width: 100% !important;
+    padding-left: 16px !important;
+    background-color: transparent !important;
+    color: #ffffff !important;
+    margin-inline: 0 !important;
+  }
+
+  .ant-menu-title-content {
+    display: flex;
+    justify-content: left;
+}
+
+.ant-menu-item-icon {
+  font-size: 20px !important;
+  margin-inline: 0 !important;
+}
+
+.ant-menu-submenu-title {
+  margin-inline: 0 !important;
+}
+  
+  /* ant-menu-item-selected */
+  .ant-menu-item-selected {
+    background-color: #434345 !important;
+    color: #ffffff !important;
+    margin-inline: 0 !important;
+  }
+  
+  /* ant-menu-title-content */
+  .ant-menu-title-content {
+    font-size: 16px !important;
+  }
+  
+  /* ant-menu-item-icon */
+  .sg.MuiSvgicon-root.ant-menu-item-icon {
+    font-size: 20px;
+  }
+  
+  /* bottom-container-open */
+  .bottom-container-open {
+    position: fixed;
+    bottom: 0;
+    z-index: 999;
+    width: 212px;
+    transition: width 0.3s ease-in-out;
+  }
+  
+  /* bottom-container-closed */
+  .bottom-container-closed {
+    position: fixed;
+    bottom: 0;
+    z-index: 999;
+    width: 48px;
+    transition: width 0.3s ease-in-out;
+  }

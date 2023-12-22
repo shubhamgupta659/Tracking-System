@@ -1,0 +1,72 @@
+a {
+    background-color: transparent;
+  }
+  
+  .sg-crest {
+    width: 1.25rem;
+    height: 1.75rem;
+  }
+  
+  .sgds-masthead a {
+    padding-left: 8px;
+    display: flex !important;
+    gap: 8px;
+    text-decoration: none;
+    display: inline-block;
+    color: #474747;
+    align-items: center;
+  }
+  
+  .sgds-masthead {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    position: relative;
+    background-color: #f0f0f0;
+    height: auto;
+    padding: 4px 0;
+    font-size: 14px;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    top: 0vh;
+  }
+  
+  .eyd-container {
+    max-width: 1280px;
+  }
+  
+  .eyd-container,
+  .eyd-container-lg {
+    margin: auto;
+    position: relative;
+    width: 100%;
+    padding: 0 20px;
+  }
+
+.header-container{
+    height: 6vh;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    color: #6b6c6e;
+    box-shadow: 1px 2px 2px #00000033;
+    position: fixed;
+    width: 100%;
+    z-index: 999;
+    top: 3vh;
+}
+  
+.logo {
+    display: flex;
+    height: 4vh;
+    padding: 8px;
+}
+  
+.applogo {
+    display: flex;
+    width: 250px;
+    gap: 15px;
+    border: none;
+}
