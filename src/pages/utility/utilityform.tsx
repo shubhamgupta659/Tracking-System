@@ -68,8 +68,6 @@ const UtilityForm = () => {
       </Row>
 
       <Row gutter={16}>
-      
-
         <Col span={12}>
           <Form.Item label="Approved Go-Live Date" name="approvedGoLiveDate">
             <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" style={{ width: '100%' }} />
