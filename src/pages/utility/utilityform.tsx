@@ -37,7 +37,7 @@ const UtilityForm = () => {
 
   return (
     <div className='main-view-container'>
-    <Card>
+    <Card title="Create Cost Utlization">
       <Form
         labelCol={{ span: 12 }}
         wrapperCol={{ span: 24 }} // Set both labelCol and wrapperCol to { span: 24 } for full width

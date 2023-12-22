@@ -37,7 +37,7 @@ const ComplianceForm = () => {
 
   return (
     <div className='main-view-container'>
-    <Card>
+    <Card title="Create Security Compliance">
       <Form
         labelCol={{ span: 8}}
         wrapperCol={{ span: 24 }}

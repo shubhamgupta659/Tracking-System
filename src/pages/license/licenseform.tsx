@@ -38,7 +38,7 @@ const LicenseForm = () => {
 
   return (
     <div className='main-view-container'>
-      <Card>
+      <Card title="Create License">
     <Form
       name="myForm"
       initialValues={{ tracked: true, licenseMode: 'User' }}
