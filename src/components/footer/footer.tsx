@@ -15,17 +15,13 @@ function Footer() {
         </div>
         <div className="footer__bottom-section">
           <div className="footer__links">
-            <a className="footer__link" href="https://www.mas.gov.sg/privacy-statement" target="_blank" rel="noreferrer">Privacy Statement
-            <LinkOutlined />
+            <a className="footer__link" href="https://www.mas.gov.sg/privacy-statement" target="_blank" rel="noreferrer"><LinkOutlined />Privacy Statement
             </a>
-            <a className="footer__link" href="https://www.mas.gov.sg/terms-of-use" target="_blank" rel="noreferrer">Terms of Use
-            <LinkOutlined />
+            <a className="footer__link" href="https://www.mas.gov.sg/terms-of-use" target="_blank" rel="noreferrer"><LinkOutlined />Terms of Use
             </a>
-            <a className="footer__link" href="https://www.mas.gov.sg/rate-this-website" target="_blank" rel="noreferrer">Rate this Website
-            <LinkOutlined />
+            <a className="footer__link" href="https://www.mas.gov.sg/rate-this-website" target="_blank" rel="noreferrer"><LinkOutlined />Rate this Website
             </a>
-            <a className="footer__link" href="https://www.reach.gov.sg/" target="_blank" rel="noreferrer">Reach
-            <LinkOutlined />
+            <a className="footer__link" href="https://www.reach.gov.sg/" target="_blank" rel="noreferrer"><LinkOutlined />Reach
             </a>
           </div>
           <div className="footer__watermark">

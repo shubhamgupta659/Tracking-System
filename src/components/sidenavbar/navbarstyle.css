@@ -12,6 +12,7 @@
     height: 94vh;
     background-color: #6b6c6e;
     color: #ffffff;
+    box-shadow: 1px 2px 2px #00000033;
   }
   
   /* nav-bar-main-container-closed */
@@ -28,6 +29,7 @@
     color: #ffffff;
     transition: width .3s ease-in-out;
     width: 48px;
+    box-shadow: 1px 2px 2px #00000033;
   }
   
 /* side-item-container */
