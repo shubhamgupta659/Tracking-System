@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { Button,Card } from 'antd';
-import { PlusOutlined, CloudUploadOutlined, DownloadOutlined, CheckOutlined } from '@ant-design/icons';
+import { PlusOutlined, CloudUploadOutlined, DownloadOutlined, CheckOutlined, EditOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import MaterialReactTable from 'material-react-table';
+import MaterialReactTable, { MRT_Cell } from 'material-react-table';
 import './licensestyle.css';
 import LicenseStatusCount from './licensestatuscount';
+import {data} from './licensedata';
+import { Box, IconButton } from '@mui/material';
+import { DeleteOutline } from '@mui/icons-material';
 
 const LicenseView =()=>{
   const navigate = useNavigate();
-  const [postResult, setPostResult] = useState(null);
+  const [postResult, setPostResult] = useState(data);
 
   const columns = [
     {
@@ -46,25 +49,25 @@ const LicenseView =()=>{
           size: 150,
         },
         {
-          accessorKey: 'serverInfo.ip',
+          accessorKey: 'serverIp',
           id: 'serverIp',
           header: 'Server IP',
           size: 150,
         },
         {
-          accessorKey: 'serverInfo.hostname',
+          accessorKey: 'serverHostname',
           id: 'serverHostname',
           header: 'Hostname',
           size: 150,
         },
         {
-          accessorKey: 'ownedBy.appCode',
+          accessorKey: 'ownedByAppCode',
           id: 'ownedByAppCode',
           header: 'Owned By (App Code)',
           size: 150,
         },
         {
-          accessorKey: 'ownedBy.appName',
+          accessorKey: 'ownedByAppName',
           id: 'ownedByAppName',
           header: 'Owned By (App Name)',
           size: 150,
@@ -140,7 +143,7 @@ const LicenseView =()=>{
     return (
       <div className='main-view-container'>
     <div>
-        <Card>
+        <Card title="License Tracking">
         <div style={{ display: 'flex', gap: '8px' }}>
       <Button type="primary" icon={<PlusOutlined />} onClick={onCreateClick}>
         Create
@@ -148,22 +151,16 @@ const LicenseView =()=>{
       <Button type="primary" icon={<CloudUploadOutlined />} disabled>
         Upload
       </Button>
-      <Button type="primary" icon={<DownloadOutlined />} disabled>
-        Download
-      </Button>
-      <Button type="primary" icon={<CheckOutlined />} disabled>
-        Assign
-      </Button>
     </div>
     </Card>
     </div>
-    <div>
-      <Card>
+    <div style={{marginTop: '10px'}}>
+      <Card title="License Status">
       <LicenseStatusCount />
       </Card>
     </div>
     <div className='detail-view-container'>
-      <Card style={{ marginTop: '10px'}}>
+      <Card title="License Details" style={{ marginTop: '10px'}}>
       <MaterialReactTable
               displayColumnDefOptions={{
                 'mrt-row-actions': {
@@ -185,7 +182,25 @@ const LicenseView =()=>{
               initialState={{ showColumnFilters: true, density: 'compact', columnVisibility: { Select: false } }}
               positionToolbarAlertBanner='bottom'
               renderRowActions={({ row, table }) => (
-                <></>
+                <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
+                  <IconButton
+                    color="secondary"
+                    onClick={() => {
+                      table.setEditingRow(row);
+                    }}
+                  >
+                    <EditOutlined />
+                  </IconButton>
+                  <IconButton
+                    color="error"
+                    onClick={() => {
+                      data.splice(row.index, 1); //assuming simple data table
+                      setPostResult([...data]);
+                    }}
+                  >
+                    <DeleteOutline/>
+                  </IconButton>
+                </Box>
               )}
             />
       </Card>

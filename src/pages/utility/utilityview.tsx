@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import './utilitystyle.css';
 import { Card, Row, Col, Button } from 'antd';
 import { BarChart, Bar, PieChart, Pie, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
-import { PlusOutlined, CloudUploadOutlined, DownloadOutlined, CheckOutlined } from '@ant-design/icons';
+import { PlusOutlined, CloudUploadOutlined, DownloadOutlined, CheckOutlined, EditOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import MaterialReactTable from 'material-react-table';
+import {MaterialReactTable} from 'material-react-table';
+import { Box, IconButton } from '@mui/material';
+import { mkConfig, generateCsv, download } from 'export-to-csv';
+import {data} from './utilityData';
+import { DeleteOutline } from '@mui/icons-material';
 
 const COLORS = [
   '#80CBC4', // Less Muted Turquoise
@@ -40,7 +44,7 @@ const sampleBarData = [
 
 const UtilityView =()=>{
     const navigate = useNavigate();
-  const [postResult, setPostResult] = useState(null);
+  const [postResult, setPostResult] = useState(data);
 
   const pieConfig = {
     data: samplePieData,
@@ -161,13 +165,30 @@ const UtilityView =()=>{
     },
   ];  
 
+  const csvConfig = mkConfig({
+    fieldSeparator: ',',
+    decimalSeparator: '.',
+    useKeysAsHeaders: true,
+  });
+
+  const handleExportRows = (rows:any) => {
+    const rowData = rows.map((row:any) => row.original);
+    const csv = generateCsv(csvConfig)(rowData);
+    download(csvConfig)(csv);
+  };
+
+  const handleExportData = () => {
+    const csv = generateCsv(csvConfig)(data);
+    download(csvConfig)(csv);
+  };
+
   function onCreateClick(){
     navigate('/createCostutil', {state: {mode:'C'}});
   }
     return (
       <div className='main-view-container'>
     <div>
-        <Card>
+        <Card title="Cost Utilisation">
         <div style={{ display: 'flex', gap: '8px' }}>
       <Button type="primary" icon={<PlusOutlined />} onClick={onCreateClick}>
         Create
@@ -175,18 +196,11 @@ const UtilityView =()=>{
       <Button type="primary" icon={<CloudUploadOutlined />} disabled>
         Upload
       </Button>
-      <Button type="primary" icon={<DownloadOutlined />} disabled>
-        Download
-      </Button>
-      <Button type="primary" icon={<CheckOutlined />} disabled>
-        Assign
-      </Button>
     </div>
     </Card>
     </div>
 
     <div style={{marginTop: '10px'}}> 
-      <Card>
       <Row gutter={16}>
         <Col span={12}>
           <Card title="Overall Utilization">
@@ -224,10 +238,9 @@ const UtilityView =()=>{
           </Card>
         </Col>
       </Row>
-      </Card>
     </div>
     <div className='detail-view-container'>
-      <Card style={{ marginTop: '10px'}}>
+      <Card title="Cost Utilisation Details" style={{ marginTop: '10px'}}>
       <MaterialReactTable
               displayColumnDefOptions={{
                 'mrt-row-actions': {
@@ -249,7 +262,25 @@ const UtilityView =()=>{
               initialState={{ showColumnFilters: true, density: 'compact', columnVisibility: { Select: false } }}
               positionToolbarAlertBanner='bottom'
               renderRowActions={({ row, table }) => (
-                <></>
+                <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
+                  <IconButton
+                    color="secondary"
+                    onClick={() => {
+                      table.setEditingRow(row);
+                    }}
+                  >
+                    <EditOutlined />
+                  </IconButton>
+                  <IconButton
+                    color="error"
+                    onClick={() => {
+                      data.splice(row.index, 1); //assuming simple data table
+                      setPostResult([...data]);
+                    }}
+                  >
+                    <DeleteOutline/>
+                  </IconButton>
+                </Box>
               )}
             />
       </Card>

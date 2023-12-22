@@ -23,7 +23,7 @@ a {
     gap: 0.25rem;
     position: relative;
     background-color: #f0f0f0;
-    height: auto;
+    height: 20px;
     padding: 4px 0;
     font-size: 14px;
     position: fixed;

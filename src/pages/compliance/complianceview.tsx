@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import './compliancestyle.css';
 import { Card, Row, Col, Typography,Button } from 'antd';
-import { PlusOutlined, CloudUploadOutlined, DownloadOutlined, CheckOutlined } from '@ant-design/icons';
+import { PlusOutlined, CloudUploadOutlined, DownloadOutlined, CheckOutlined, EditOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import MaterialReactTable from 'material-react-table';
 import { PieChart, Pie, Tooltip, Legend, Cell, BarChart, Bar, XAxis, YAxis } from 'recharts';
+import { Box, IconButton } from '@mui/material';
+import { DeleteOutline } from '@mui/icons-material';
+import {data} from './compliancedata';
 
 const { Title } = Typography;
 
@@ -48,7 +51,7 @@ const samplePieData = [
 
 const ComplianceView =()=>{
     const navigate = useNavigate();
-  const [postResult, setPostResult] = useState(null);
+  const [postResult, setPostResult] = useState(data);
 
   const columns = [
     {
@@ -173,19 +176,13 @@ const ComplianceView =()=>{
     return (
       <div className='main-view-container'>
     <div>
-        <Card>
+        <Card title="Security Compliance">
         <div style={{ display: 'flex', gap: '8px' }}>
       <Button type="primary" icon={<PlusOutlined />} onClick={onCreateClick}>
         Create
       </Button>
       <Button type="primary" icon={<CloudUploadOutlined />} disabled>
         Upload
-      </Button>
-      <Button type="primary" icon={<DownloadOutlined />} disabled>
-        Download
-      </Button>
-      <Button type="primary" icon={<CheckOutlined />} disabled>
-        Assign
       </Button>
     </div>
     </Card>
@@ -240,7 +237,7 @@ const ComplianceView =()=>{
         </Row>
         </div>
     <div className='detail-view-container'>
-      <Card style={{ marginTop: '10px'}}>
+      <Card title="Security Compliance Details" style={{ marginTop: '10px'}}>
       <MaterialReactTable
               displayColumnDefOptions={{
                 'mrt-row-actions': {
@@ -262,7 +259,25 @@ const ComplianceView =()=>{
               initialState={{ showColumnFilters: true, density: 'compact', columnVisibility: { Select: false } }}
               positionToolbarAlertBanner='bottom'
               renderRowActions={({ row, table }) => (
-                <></>
+                <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
+                  <IconButton
+                    color="secondary"
+                    onClick={() => {
+                      table.setEditingRow(row);
+                    }}
+                  >
+                    <EditOutlined />
+                  </IconButton>
+                  <IconButton
+                    color="error"
+                    onClick={() => {
+                      data.splice(row.index, 1); //assuming simple data table
+                      setPostResult([...data]);
+                    }}
+                  >
+                    <DeleteOutline/>
+                  </IconButton>
+                </Box>
               )}
             />
       </Card>

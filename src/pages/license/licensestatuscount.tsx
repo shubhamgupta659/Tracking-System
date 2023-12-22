@@ -13,7 +13,7 @@ const mutedColors = ['#E57373', '#90A4AE', '#FFD54F', '#81C784', '#B39DDB'];
 
 const LicenseStatusCount = () => {
   return (
-    <div style={{marginTop: '10px'}}>
+    <div>
       <Row gutter={16} justify="center" align="middle">
         <Col span={4}>
           <Card style={{ background: mutedColors[0], width: '100%' }}>

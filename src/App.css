@@ -43,3 +43,8 @@
   margin-left: 58px; 
   position: absolute;
 }
+
+.ant-card .ant-card-head-title {
+  display: flex !important;
+  justify-content: left !important;
+}
