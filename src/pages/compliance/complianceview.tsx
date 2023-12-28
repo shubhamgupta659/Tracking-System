@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './compliancestyle.css';
-import { Card, Row, Col, Typography,Button } from 'antd';
+import { Card, Row, Col, Typography,Button,Form, Select } from 'antd';
 import { PlusOutlined, CloudUploadOutlined, DownloadOutlined, CheckOutlined, EditOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import MaterialReactTable from 'material-react-table';
@@ -8,6 +8,7 @@ import { PieChart, Pie, Tooltip, Legend, Cell, BarChart, Bar, XAxis, YAxis } fro
 import { Box, IconButton } from '@mui/material';
 import { DeleteOutline } from '@mui/icons-material';
 import {data} from './compliancedata';
+const { Option } = Select;
 
 const { Title } = Typography;
 
@@ -52,6 +53,9 @@ const samplePieData = [
 const ComplianceView =()=>{
     const navigate = useNavigate();
   const [postResult, setPostResult] = useState(data);
+  const [form] = Form.useForm();
+
+  const accountsOptions = data?.map(obj=>obj.accountNumber);
 
   const columns = [
     {
@@ -173,6 +177,19 @@ const ComplianceView =()=>{
   function onCreateClick(){
     navigate('/createCompliance', {state: {mode:'C'}});
   }
+
+  // Handle filter button click
+  const handleFilter = () => {
+    const values = form.getFieldsValue();
+    setPostResult(data?.filter(obj=> obj.accountNumber === values?.accountNumber));
+  };
+
+  // Handle reset button click
+  const handleReset = () => {
+    form.resetFields();
+    setPostResult(data);
+  };
+
     return (
       <div className='main-view-container'>
     <div>
@@ -185,6 +202,35 @@ const ComplianceView =()=>{
         Upload
       </Button>
     </div>
+    </Card>
+    </div>
+    <div style={{marginTop: '10px'}}> 
+    <Card title="Search Filters">
+    <Form form={form} layout="vertical">
+      <Row gutter={16}>
+        {/* First row - Select dropdown */}
+        <Col span={6}>
+          <Form.Item name="accountNumber" label="Account Number">
+            <Select placeholder="Select an account number">
+              {accountsOptions.map((number) => (
+                <Option key={number} value={number}>
+                  {number}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Col>
+        </Row>
+
+        <Row gutter={16}>
+        <Col span={24} style={{ textAlign: 'right' }}>
+          <Button type="primary" style={{ marginRight: 8 }} onClick={handleFilter}>
+            Filter
+          </Button>
+          <Button onClick={handleReset}>Reset</Button>
+        </Col>
+      </Row>
+    </Form>
     </Card>
     </div>
     <div>
