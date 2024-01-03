@@ -1,6 +1,6 @@
 
 import { Modal } from "antd";
-import { clearToken, goToLogin } from "@/api/apiutils";
+import { goToLogin } from "../api/apiutil";
 
 const { inactiveTime, loginPageSuffix } = {inactiveTime :15, loginPageSuffix :'/'};
 
