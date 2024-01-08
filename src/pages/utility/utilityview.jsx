@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './utilitystyle.css';
 import { Card, Row, Col, Button, Form, Select } from 'antd';
-import { BarChart, Bar, PieChart, Pie, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, PieChart, Pie, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { PlusOutlined, CloudUploadOutlined, DownloadOutlined, CheckOutlined, EditOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import {MaterialReactTable} from 'material-react-table';
@@ -11,47 +11,39 @@ import {data} from './utilityData';
 import { DeleteOutline } from '@mui/icons-material';
 const { Option } = Select;
 
-const COLORS = [
-  '#80CBC4', // Less Muted Turquoise
-  '#FFAB91', // Less Muted Salmon
-  '#90A4AE', // Less Muted Blue-Gray
-  '#CE93D8', // Less Muted Purple
-  '#FFD54F', // Less Muted Yellow
-  '#64B5F6', // Less Muted Sky Blue
-]; 
-
-const samplePieData = [
-  { category: 'Hardware', value: 25 },
-  { category: 'Software Licenses', value: 30 },
-  { category: 'Cloud Services', value: 20 },
-  { category: 'Personnel Costs', value: 15 },
-  { category: 'Miscellaneous', value: 10 },
-];
-
-const sampleBarData = [
-  { month: 'Jan', utilization: 100 },
-  { month: 'Feb', utilization: 80 },
-  { month: 'Mar', utilization: 120 },
-  { month: 'Apr', utilization: 90 },
-  { month: 'May', utilization: 110 },
-  { month: 'Jun', utilization: 85 },
-  { month: 'Jul', utilization: 95 },
-  { month: 'Aug', utilization: 75 },
-  { month: 'Sep', utilization: 105 },
-  { month: 'Oct', utilization: 88 },
-  { month: 'Nov', utilization: 92 },
-  { month: 'Dec', utilization: 78 },
-];
-
 const UtilityView =()=>{
   const navigate = useNavigate();
   const [postResult, setPostResult] = useState(data);
+  const [acctNum, setAcctNum] = useState(null);
   const [form] = Form.useForm();
-
   const accountsOptions = data?.map(obj=>obj.accountNumber);
 
+  const handleAcctChnage = (e) =>{
+    setAcctNum(e);
+  }
+
+  const generateMutedColor = () => {
+    const baseColor = Math.floor(Math.random() * 360); // Generate a random hue
+    const saturation = Math.floor(Math.random() * 50) + 60; // Slightly muted saturation
+    const lightness = Math.floor(Math.random() * 50) + 40; // Slightly muted lightness
+    return `hsl(${baseColor}, ${saturation}%, ${lightness}%)`;
+  };
+
+  const environmentBudgets = postResult?.reduce((accumulator, item) => {
+    const { environment, approvedBudget } = item;
+    accumulator[environment] = (accumulator[environment] || 0) + approvedBudget;
+    return accumulator;
+  }, {});
+
+  const pieChartData = Object.keys(environmentBudgets).map(environment => ({
+    name: environment,
+    value: environmentBudgets[environment],
+  }));
+
+  const pieColors = pieChartData.map(() => generateMutedColor());
+
   const pieConfig = {
-    data: samplePieData,
+    data: pieChartData,
     angleField: 'value',
     colorField: 'type',
     radius: 0.9,
@@ -67,8 +59,25 @@ const UtilityView =()=>{
     interactions: [{ type: 'element-active' }],
   };
 
+  const getDate = (dateString) => new Date(dateString);
+
+  const monthlyUtilization = postResult.reduce((accumulator, item) => {
+    const { approvedGoLiveDate, approvedBudget } = item;
+    const monthKey = getDate(approvedGoLiveDate).toLocaleDateString('en-US', { month: 'short' });
+
+    accumulator[monthKey] = (accumulator[monthKey] || 0) + approvedBudget;
+    return accumulator;
+  }, {});
+
+  const barChartData = Object.keys(monthlyUtilization).map(month => ({
+    name: month,
+    value: monthlyUtilization[month],
+  }));
+
+  const barColors = barChartData.map(() => generateMutedColor());
+
   const barConfig = {
-    data: sampleBarData,
+    data: barChartData,
     xField: 'month',
     yField: 'utilization',
     seriesField: 'month',
@@ -175,8 +184,8 @@ const UtilityView =()=>{
     useKeysAsHeaders: true,
   });
 
-  const handleExportRows = (rows:any) => {
-    const rowData = rows.map((row:any) => row.original);
+  const handleExportRows = (rows) => {
+    const rowData = rows.map((row) => row.original);
     const csv = generateCsv(csvConfig)(rowData);
     download(csvConfig)(csv);
   };
@@ -198,6 +207,7 @@ const UtilityView =()=>{
 
   // Handle reset button click
   const handleReset = () => {
+    setAcctNum(null);
     form.resetFields();
     setPostResult(data);
   };
@@ -205,7 +215,7 @@ const UtilityView =()=>{
     return (
       <div className='main-view-container'>
     <div>
-        <Card title="Cost Utilisation">
+        <Card className="top-container" title={<div style={{ textAlign: 'center' }}>Cost Utilisation</div>}>
         <div style={{ display: 'flex', gap: '8px' }}>
       <Button type="primary" icon={<PlusOutlined />} onClick={onCreateClick}>
         Create
@@ -217,13 +227,13 @@ const UtilityView =()=>{
     </Card>
     </div>
     <div style={{marginTop: '10px'}}> 
-    <Card title="Search Filters">
+    <Card title={<div style={{ display: 'flex', textAlign: 'center' }}>Search Filters</div>}>
     <Form form={form} layout="vertical">
       <Row gutter={16}>
         {/* First row - Select dropdown */}
         <Col span={6}>
           <Form.Item name="accountNumber" label="Account Number">
-            <Select placeholder="Select an account number">
+            <Select placeholder="Select an account number" onChange={e=>handleAcctChnage(e)}>
               {accountsOptions.map((number) => (
                 <Option key={number} value={number}>
                   {number}
@@ -236,7 +246,7 @@ const UtilityView =()=>{
 
         <Row gutter={16}>
         <Col span={24} style={{ textAlign: 'right' }}>
-          <Button type="primary" style={{ marginRight: 8 }} onClick={handleFilter}>
+          <Button type="primary" style={{ marginRight: 8 }} onClick={handleFilter} disabled={form.getFieldValue("accountNumber") === null || form.getFieldValue("accountNumber") === undefined}>
             Filter
           </Button>
           <Button onClick={handleReset}>Reset</Button>
@@ -248,10 +258,10 @@ const UtilityView =()=>{
     <div style={{marginTop: '10px'}}> 
       <Row gutter={16}>
         <Col span={12}>
-          <Card title="Overall Utilization">
+          <Card title={<div style={{ display: 'flex', textAlign: 'center' }}>Overall Utilization</div>}>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
-                <Pie data={samplePieData}
+                <Pie data={pieChartData}
                 dataKey="value"
                 nameKey="category"
                 cx="50%"
@@ -259,8 +269,8 @@ const UtilityView =()=>{
                 outerRadius={80}
                 fill="#8884d8"
                 label>
-                  {samplePieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  {pieChartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
                   ))}
                 </Pie>
                 <Tooltip />
@@ -271,21 +281,28 @@ const UtilityView =()=>{
         </Col>
         <Col span={12}>
           <Card
-            title="Monthly Utilization Trend"
+            title={<div style={{ display: 'flex', textAlign: 'center' }}>Monthly Utilization Trend</div>}
             extra={<Button onClick={exportCsv}>Export to CSV</Button>}
           >
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={sampleBarData}>
-                <Bar dataKey="utilization" fill="#8884d8" />
-                <Tooltip />
-              </BarChart>
+            <BarChart width={600} height={400} data={barChartData}>
+      <XAxis dataKey="name" />
+      <YAxis />
+      <Tooltip formatter={(value) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)} />
+      <Legend />
+      <Bar dataKey="value" fill="#8884d8">
+        {barChartData.map((entry, index) => (
+          <Cell key={`cell-${index}`} fill={barColors[index % barColors.length]} />
+        ))}
+      </Bar>
+    </BarChart>
             </ResponsiveContainer>
           </Card>
         </Col>
       </Row>
     </div>
     <div className='detail-view-container'>
-      <Card title="Cost Utilisation Details" style={{ marginTop: '10px'}}>
+      <Card title={<div style={{ display: 'flex', textAlign: 'center' }}>Cost Utilisation Summary</div>} style={{ marginTop: '10px'}}>
       <MaterialReactTable
               displayColumnDefOptions={{
                 'mrt-row-actions': {

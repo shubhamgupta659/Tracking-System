@@ -41,21 +41,44 @@ const securityScoreAndFailureData = [
   // Add more data as needed
 ];
 
-const samplePieData = [
-  { category: 'All Enabled', value: 15 },
-  { category: 'Failed', value: 20 },
-  { category: 'Unknown', value: 10 },
-  { category: 'No Data', value: 5 },
-  { category: 'Passed', value: 30 },
-  { category: 'Disabled', value: 20 },
-];
-
 const ComplianceView =()=>{
     const navigate = useNavigate();
   const [postResult, setPostResult] = useState(data);
+  const [acctNum, setAcctNum] = useState(null);
   const [form] = Form.useForm();
 
+  const handleAcctChnage = (e) =>{
+    setAcctNum(e);
+  }
+
   const accountsOptions = data?.map(obj=>obj.accountNumber);
+
+  const pieColors = ['#0088FE', '#00C49F', '#FFBB28']; // You can customize colors as needed
+
+  const totalChecks = postResult.reduce(
+    (sum, { compliantCheckCounts, nonCompliantCheckCounts, suppressedChecksCounts }) =>
+      sum + compliantCheckCounts + nonCompliantCheckCounts + suppressedChecksCounts,
+    0
+  );
+
+  const nonCompliantPercentage = (postResult.reduce((sum, { nonCompliantCheckCounts }) => sum + nonCompliantCheckCounts, 0) /
+    totalChecks) * 100;
+
+  const barChartData = [
+    { name: 'Non-Compliant Percentage', value: nonCompliantPercentage.toFixed(2) },
+  ];
+
+  const pieData = [
+    { name: 'Compliant', value: postResult.reduce((sum, { compliantCheckCounts }) => sum + compliantCheckCounts, 0) },
+    { name: 'Non-Compliant', value: postResult.reduce((sum, { nonCompliantCheckCounts }) => sum + nonCompliantCheckCounts, 0)},
+    { name: 'Suppressed', value: postResult.reduce((sum, { suppressedChecksCounts }) => sum + suppressedChecksCounts, 0) },
+  ];
+
+  const barData = postResult.map(item => ({
+    accountName: item.accountName,
+    securityScore: item.compliantCheckCounts / (item.compliantCheckCounts + item.nonCompliantCheckCounts),
+    checkFailurePercentage: (item.nonCompliantCheckCounts / (item.compliantCheckCounts + item.nonCompliantCheckCounts)) * 100,
+  }));
 
   const columns = [
     {
@@ -186,6 +209,7 @@ const ComplianceView =()=>{
 
   // Handle reset button click
   const handleReset = () => {
+    setAcctNum(null);
     form.resetFields();
     setPostResult(data);
   };
@@ -193,7 +217,7 @@ const ComplianceView =()=>{
     return (
       <div className='main-view-container'>
     <div>
-        <Card title="Security Compliance">
+        <Card className="top-container" title={<div style={{ textAlign: 'center' }}>Security Compliance</div>}>
         <div style={{ display: 'flex', gap: '8px' }}>
       <Button type="primary" icon={<PlusOutlined />} onClick={onCreateClick}>
         Create
@@ -205,13 +229,13 @@ const ComplianceView =()=>{
     </Card>
     </div>
     <div style={{marginTop: '10px'}}> 
-    <Card title="Search Filters">
+    <Card title={<div style={{ display: 'flex', textAlign: 'center' }}>Search Filters</div>}>
     <Form form={form} layout="vertical">
       <Row gutter={16}>
         {/* First row - Select dropdown */}
         <Col span={6}>
           <Form.Item name="accountNumber" label="Account Number">
-            <Select placeholder="Select an account number">
+            <Select placeholder="Select an account number" onChange={e=>handleAcctChnage(e)}>
               {accountsOptions.map((number) => (
                 <Option key={number} value={number}>
                   {number}
@@ -224,7 +248,7 @@ const ComplianceView =()=>{
 
         <Row gutter={16}>
         <Col span={24} style={{ textAlign: 'right' }}>
-          <Button type="primary" style={{ marginRight: 8 }} onClick={handleFilter}>
+          <Button type="primary" style={{ marginRight: 8 }} onClick={handleFilter} disabled={form.getFieldValue("accountNumber") === null || form.getFieldValue("accountNumber") === undefined}>
             Filter
           </Button>
           <Button onClick={handleReset}>Reset</Button>
@@ -236,54 +260,66 @@ const ComplianceView =()=>{
     <div>
       <Row gutter={16}>
         <Col span={8}>
-          <Card className="security-compliance" title="Security Compliance Overview">
-            <PieChart width={400} height={300}>
-              <Pie
-                data={samplePieData}
-                dataKey="value"
-                nameKey="category"
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                fill="#8884d8"
-                label
-              >
-                {samplePieData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={lessMutedColors[index % lessMutedColors.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend formatter={(value, entry, index) => `${samplePieData[index].category}`} />
-            </PieChart>
+          <Card title={<div style={{ display: 'flex', textAlign: 'center' }}>Security Compliance Overview</div>} className="security-compliance">
+          <PieChart width={400} height={400}>
+      <Pie
+        data={pieData}
+        cx={200}
+        cy={200}
+        outerRadius={80}
+        fill="#8884d8"
+        dataKey="value"
+        label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+      >
+        {pieData.map((entry, index) => (
+          <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
+        ))}
+      </Pie>
+      <Tooltip />
+      <Legend />
+    </PieChart>
           </Card>
         </Col>
         <Col span={8}>
-          <Card className="security-compliance" title="Total Non-Compliant Applications Percentage">
-            <BarChart width={400} height={300} data={nonCompliantPercentageData}>
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="percentage" fill="#FFAB91" />
-            </BarChart>
+          <Card className="security-compliance" title={<div style={{ display: 'flex', textAlign: 'center' }}>Total Non-Compliant Applications Percentage</div>}>
+          <BarChart width={400} height={400} data={barChartData}>
+      <XAxis dataKey="name" />
+      <YAxis />
+      <Tooltip />
+      <Legend />
+      <Bar dataKey="value" fill="#FFBB28">
+        {barChartData.map((entry, index) => (
+          <Cell key={`cell-${index}`} fill="#FFBB28" />
+        ))}
+      </Bar>
+    </BarChart>
           </Card>
         </Col>
         <Col span={8}>
-          <Card className="security-compliance" title="Security Score and Check Failure Percentage per Account">
-            <BarChart width={400} height={300} data={securityScoreAndFailureData}>
-              <XAxis dataKey="account" />
-              <YAxis yAxisId="left" />
-              <YAxis yAxisId="right" orientation="right" />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="percentage" fill={lessMutedColors[1]} yAxisId="left" />
-              <Bar dataKey="securityScore" fill={lessMutedColors[4]} yAxisId="right" />
-            </BarChart>
+          <Card className="security-compliance" title={<div style={{ display: 'flex', textAlign: 'center' }}>Security Score and Check Failure Percentage per Account</div>} >
+          <BarChart width={600} height={400} data={barData}>
+      <XAxis dataKey="accountName" />
+      <YAxis yAxisId="left" label={{ value: 'Security Score', angle: -90, position: 'insideLeft' }} />
+      <YAxis yAxisId="right" orientation="right" label={{ value: 'Check Failure Percentage (%)', angle: 90, position: 'insideRight' }} />
+      <Tooltip />
+      <Legend />
+      <Bar yAxisId="left" dataKey="securityScore" fill="#0088FE">
+        {barData.map((entry, index) => (
+          <Cell key={`cell-securityScore-${index}`} fill="#0088FE" />
+        ))}
+      </Bar>
+      <Bar yAxisId="right" dataKey="checkFailurePercentage" fill="#FFBB28">
+        {barData.map((entry, index) => (
+          <Cell key={`cell-checkFailurePercentage-${index}`} fill="#FFBB28" />
+        ))}
+      </Bar>
+    </BarChart>
           </Card>
         </Col>
         </Row>
         </div>
     <div className='detail-view-container'>
-      <Card title="Security Compliance Details" style={{ marginTop: '10px'}}>
+      <Card title={<div style={{ display: 'flex', textAlign: 'center' }}>Security Compliance Details</div>} style={{ marginTop: '10px'}}>
       <MaterialReactTable
               displayColumnDefOptions={{
                 'mrt-row-actions': {
